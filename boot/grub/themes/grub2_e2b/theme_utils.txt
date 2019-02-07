@@ -1,0 +1,67 @@
+#grub2 theme
+
+
+desktop-image: "nightsky.jpg"
+title-text: "UTILITIES MENU"
+title-color: "#FF00FF"
+terminal-box: "terminal_box_*.png"
+terminal-font: "Gnu Unifont Mono Regular 16"
+
++ boot_menu {
+  left = 10%
+  width = 80%
+  top = 8%
+  height = 80%	
+
+  item_font = "DejaVu Sans Bold 14"
+  item_color = "#bbbbbb"
+  item_height = 32
+  item_icon_space = 8
+  item_spacing = 2
+
+  selected_item_font = "DejaVu Sans Bold 14"
+  selected_item_color= "#ffffff"
+  selected_item_pixmap_style = "select_*.png"
+
+  icon_height = 32
+  icon_width = 32
+
+  scrollbar = true
+  scrollbar_width = 10
+  scrollbar_thumb = "slider_*.png"
+  # scrollbar_thumb = "scrollbar_thumb_*.png"
+   scrollbar_frame = "scrollbar_frame_*.png"
+	   
+}
+
++ progress_bar {
+  id = "__timeout__"
+
+  left = 5%
+  top = 93%
+  height = 1
+  width = 90%
+
+  # font = "DejaVu Sans Regular 12"
+
+  text_color = "#aaaaaa"
+  fg_color = "#ff4446"
+
+  bg_color = "#323637"
+  border_color = "#323637"
+
+  # instead of the above colors, use pixmaps
+  #bar_style = "progress_bar_*.png"
+  #highlight_style = "progress_highlight_*.png"
+  #bar_style = "inbox_*.png"
+  #highlight_style = "progress_*.png"
+
+  #use for no bar  
+  #bar_style = "*"
+  #highlight_style = "*"
+
+  #text = "@TIMEOUT_NOTIFICATION_LONG@"
+  #text = "Timeout..."
+  text = "@TIMEOUT_NOTIFICATION_SHORT@"
+}
+
