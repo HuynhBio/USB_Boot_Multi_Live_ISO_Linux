@@ -1,0 +1,81 @@
+if $BIT64; then
+if [ -e "$isofpath/archstrike.iso" ]; then
+menuentry "ArchStrike Linux 64-bit (x86_64 dual)" --unrestricted --class arch {
+    set isoname=archstrike.iso ; CHECK_MNU_FOLDER
+	probe -u $root2 --set=root2uuid
+	set imgdevpath="/dev/disk/by-uuid/$root2uuid"
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/arch/boot/x86_64/vmlinuz archisodevice=/dev/loop0 img_dev=$imgdevpath img_loop=$isofile
+	initrd (loop)/arch/boot/x86_64/archiso.img
+	boot
+}
+fi
+fi
+
+if [ -e "$isofpath/backbox.iso" ]; then
+menuentry "Backbox live ISO"  --unrestricted --class backbox{
+    set isoname=backbox.iso ; CHECK_MNU_FOLDER
+    set root=$root2
+    loopback loop $isofile
+    set gfxpayload=keep
+    echo 'Loading vmlinuz.efi ...'
+	linux	(loop)/casper/vmlinuz.efi  file=/cdrom/preseed/backbox.seed boot=casper iso-scan/filename=$isofile quiet splash --
+	echo 'Loading initrd.gz ...'
+	initrd	(loop)/casper/initrd.gz
+	boot
+	}
+fi
+
+
+#PENTOO  needs FAT32! 
+if $FAT; then
+if $BIT64; then
+if [ -e "$isofpath/pentoo-hardened.iso" ]; then
+menuentry "Pentoo Hardened live (FAT32-only)" --unrestricted --class gentoo{
+	set isoname=pentoo-hardened.iso ; CHECK_MNU_FOLDER
+	set bootlang=en_US
+	set bootkeymap=us
+	set gfxpayload=keep
+	echo "Language: $bootlang"
+	echo "Keyboard: $bootkeymap"
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/isolinux/pentoo root=/dev/ram0 init=/linuxrc aufs looptype=squashfs loop=/image.squashfs cdroot isoboot=$isofile vconsole.keymap=$bootkeymap locale=$bootlang $modeset_opt $nox $acpi_opt console=tty1 --
+	initrd (loop)/isolinux/pentoo.igz
+	boot
+}
+fi
+fi
+fi
+
+
+if $BIT64; then
+if [ -e "$isofpath/kali-xfce.iso" ]; then
+menuentry "Kali XFCE 64-bit live ISO" --unrestricted --class kali {
+	set isoname=kali-xfce.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/live/vmlinuz findiso=$isofile boot=live noconfig=sudo username=root hostname=kali noswap --
+	initrd (loop)/live/initrd.img
+	boot
+}
+fi
+fi
+
+if $BIT64; then
+if [ "${grub_platform}" == "pc" ]; then
+if [ -e "/live/vmlinuz" ]; then
+menuentry "Kodachi 3 Live ISO" {
+	configfile "/_ISO/MAINMENU/cfg/kodachi.cfg"
+}
+fi
+fi
+fi
+
+#WORKS MBR32 MBR64 EFI64 EFI32 (failsafe may fail to boot!)
+if [ -e "$isofpath/wt6.iso" ]; then
+menuentry "Weakerthan 6 Live ISO" --unrestricted --class weakerthan {
+	configfile "/_ISO/MAINMENU/cfg/wt6.cfg"
+}
+fi

@@ -1,0 +1,252 @@
+#BACKUP MENU
+
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+
+#untested
+if $BIT64; then
+if [ -e "$isofpath/rdriveimage.iso" ]; then
+menuentry "Start R-DriveImage UEFI 64-bit" --unrestricted --class R-Drive-Image{
+    set isoname=rdriveimage.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	linux (loop,msdos1)/kernel64 vga=791
+	initrd (loop,msdos1)/lrfsbase.bin (loop,msdos1)/rm_scsi.b64 (loop,msdos1)/rm_pata.b64 (loop,msdos1)/rm_usb.b64 (loop,msdos1)/rm_pcard.b64 (loop,msdos1)/rm_video.b64 (loop,msdos1)/rm_other.b64 (loop,msdos1)/rootgui (loop,msdos1)/rmconfig.bin
+	linux (loop)/kernel64 vga=791
+	initrd (loop)/lrfsbase.bin (loop)/rm_scsi.b64 (loop)/rm_pata.b64 (loop)/rm_usb.b64 (loop)/rm_pcard.b64 (loop)/rm_video.b64 (loop)/rm_other.b64 (loop)/rootgui (loop)/rmconfig.bin
+	boot
+}
+fi
+fi
+# only works in MBR32, not UEFI32 if 32-bit version
+if $BIT32; then
+if [ -e "$isofpath/rdriveimage.iso" ]; then
+menuentry "Start R-DriveImage Legacy-mode" --unrestricted --class R-Drive-Image{
+    set isoname=rdriveimagee.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	linux (loop,msdos1)/kernel32 vga=791
+	initrd (loop,msdos1)/lrfsbase.bin (loop,msdos1)/rm_scsi.b32 (loop,msdos1)/rm_pata.b32 (loop,msdos1)/rm_usb.b32 (loop,msdos1)/rm_pcard.b32 (loop,msdos1)/rm_video.b32 (loop,msdos1)/rm_other.b32 (loop,msdos1)/rootgui (loop,msdos1)/rmconfig.bin
+	linux (loop)/kernel32 vga=791
+	initrd (loop)/lrfsbase.bin (loop)/rm_scsi.b32 (loop)/rm_pata.b32 (loop)/rm_usb.b32 (loop)/rm_pcard.b32 (loop)/rm_video.b32 (loop)/rm_other.b32 (loop)/rootgui (loop)/rmconfig.bin
+	boot
+}
+fi
+fi
+if $MBR; then
+if [ -e "$isofpath/rdriveimagee.iso" ]; then
+menuentry "Start R-DriveImage LEGACY VERSION" --unrestricted --class R-Drive-Image{
+    set isoname=rdriveimage.iso ; CHECK_MNU_FOLDER
+	echo 'Loading Memdisk...'
+    linux16 /boot/grub/memdisk iso raw
+	echo 'Loading ISO...'
+    initrd16 $isofile
+	boot
+}
+fi
+fi
+
+
+
+
+#gives errors on loop!
+#if [ -e "$isofpath/ati16.iso" ]; then
+#menuentry "Acronis True Image Home 2016 ISO ElTorito" --unrestricted --class icon-ati {
+#    set isoname=ati16.iso ; CHECK_MNU_FOLDER
+#	set quiet=1
+#	set gfxpayload=1024x768x32,1024x768
+#	set mbrcrcs=on
+#	set root=$root2
+#	loopback loop $isofile
+#	echo mount the El Torito floppy image
+#	loopback ElTorito (loop)232+184000
+#	linux (ElTorito)/dat10.dat quiet force_modules=usbhid
+#	initrd (ElTorito)/dat11.dat (ElTorito)/dat12.dat
+#	boot
+#}
+#fi
+
+#test 32-bit - does not seem to work on ati16.iso...
+#if $BIT32; then
+if [ -e "$isofpath/ati1632.iso" ]; then
+menuentry "Acronis True Image Home 2016 ISO 32-bit untested" --unrestricted --class icon-ati {
+    set isoname=ati1632.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set pager=0
+	set gfxpayload=text
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	linux (loop,msdos1)/dat10.dat quiet force_modules=usbhid
+	initrd (loop,msdos1)/dat11.dat (loop,msdos1)/dat12.dat
+	boot
+}
+#fi
+fi
+
+#acronis language codes (e.g. lang=13)
+#1-ENGLISH; 11-BRAZIL; 13-CHINESE; 14-CHINESET; 8-CZECH; 6-DUTCH; 27-ESPANA; 2-GERMAN; 25-INDIAN; 15-ITALIAN; 9-JAPAN; 3-KOREAN; 5-POLISH; 19-PORTUGUESE; 0-RUSSIAN; 12-SPANISH; 17-FRENCH
+
+#EFI64 MBR64 
+if $BIT64; then
+if [ -e "$isofpath/ati16.iso" ]; then
+menuentry "Acronis True Image Home 2016 (ISO)" --unrestricted --class icon-ati {
+    set isoname=ati16.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set pager=0
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	linux (loop,msdos1)/dat10.dat quiet force_modules=usbhid lang=1
+	initrd (loop,msdos1)/dat11.dat (loop,msdos1)/dat12.dat
+	boot
+}
+fi
+fi
+
+
+if [ -e "$isofpath/ati15.iso" ]; then
+menuentry "Acronis True Image Home 2015 ISO ElTorito" --unrestricted --class icon-ati {
+    set isoname=ati15.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	echo mount the El Torito floppy image
+	loopback ElTorito (loop)156+158000
+	linux (ElTorito)/dat9.dat quiet
+	initrd (ElTorito)/dat8.dat
+	boot
+}
+fi
+
+if [ -e "$isofpath/ati14.iso" ]; then
+menuentry "Acronis True Image Home 2014 ISO ElTorito" --unrestricted --class icon-ati {
+    set isoname=ati14.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	echo mount the El Torito floppy image
+	loopback ElTorito (loop)160+145468
+	linux (ElTorito)/dat9.dat quiet
+	initrd (ElTorito)/dat8.dat
+	boot
+}
+fi
+
+
+if [ -e "$isofpath/ati13.iso" ]; then
+menuentry "Acronis True Image Home 2013 ISO ElTorito" --unrestricted --class icon-ati {
+    set isoname=ati13.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	echo mount the El Torito floppy image
+	loopback ElTorito (loop)156+100000
+	linux (ElTorito)/dat9.dat quiet
+	initrd (ElTorito)/dat8.dat
+	boot
+}
+fi
+
+if [ -e "$isofpath/add12.iso" ]; then
+menuentry "Acronis Disk Director Home 12 ISO ElTorito" --unrestricted --class icon-ads {
+    set isoname=ati13.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	echo mount the El Torito floppy image
+	loopback ElTorito (loop)220+166000
+	linux (ElTorito)/dat5.dat quiet
+	initrd (ElTorito)/dat4.dat
+	boot
+}
+fi
+
+if [ -e "$isofpath/abr64.iso" ]; then
+menuentry "Acronis Backup Advanced PC 11.5 ISO ElTorito" --unrestricted --class icon-ati {
+    set isoname=abr64.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	loopback ElTorito (loop)160+324000
+	linux (ElTorito)/abr64ker.dat product=bootagent media_for_windows quiet
+	initrd (ElTorito)/abr64ram.dat (ElTorito)/dat8.dat
+	boot
+}
+fi
+
+
+if [ -e "$isofpath/asd5.iso" ]; then
+menuentry "Acronis Snap Deploy 5 Standalone Utility" --unrestricted --class asd5{
+    set isoname=asd5.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	echo mount the El Torito floppy image
+	loopback ElTorito (loop)208+460000
+	linux (ElTorito)/dat5.dat quiet
+	initrd (ElTorito)/dat4.dat
+	boot
+}
+fi
+
+if [ -e "$isofpath/asd5.iso" ]; then
+menuentry "Acronis Snap Deploy 5 Master Image Creator" --unrestricted --class asd5{
+    set isoname=asd5.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	echo mount the El Torito floppy image
+	loopback ElTorito (loop)208+460000
+	linux (ElTorito)/dat9.dat quiet
+	initrd (ElTorito)/dat8.dat
+	boot
+}
+fi
+
+
+if [ -e "$isofpath/asd5.iso" ]; then
+menuentry "Acronis Snap Deploy 5 Agent" --unrestricted --class asd5{
+    set isoname=asd5.iso ; CHECK_MNU_FOLDER
+	set quiet=1
+	set gfxpayload=1024x768x32,1024x768
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	echo mount the El Torito floppy image
+	loopback ElTorito (loop)208+460000
+	linux (ElTorito)/dat17.dat quiet
+	initrd (ElTorito)/dat16.dat
+	boot
+}
+fi

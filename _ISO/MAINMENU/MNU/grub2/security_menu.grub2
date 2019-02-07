@@ -1,0 +1,270 @@
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+
+# get a UTF8 fat filesystem error! OK on NTFS
+if $BIT64; then
+if [ -e "$isofpath/archassault.iso" ]; then
+menuentry "ArchAssault (x86_64)" --unrestricted --class arch {
+	set isoname=archassault.iso ; CHECK_MNU_FOLDER
+    set root=$root2
+	set gfxpayload=1024x768,800x600
+	loopback loop $isofile
+	probe -l (loop) --set=looplabel
+	set imgdevpath="/dev/disk/by-uuid/$root2uuid"
+	linux (loop)/arch/boot/x86_64/vmlinuz-linux-archassault archisobasedir=arch archisolabel=$looplabel img_dev=$imgdevpath img_loop=$isofile  
+	initrd (loop)/arch/boot/x86_64/archiso.img
+	boot
+
+#archisolabel=ArchAssault-0.1   iso_loop_dev and iso_loop_path not supported??? archisolabel=$looplabel
+#linux (loop)/arch/boot/x86_64/vmlinuz-linux-archassault archisobasedir=arch archisolabel=ArchAssault-0.1 img_dev=/dev/disk/by-label/home img_loop=$isofile earlymodules=loop toram --
+#	set imgdevpath="/dev/disk/by-uuid/$root2uuid" earlymodules=loop toram --
+#	linux (loop)/boot/vmlinuz_x86_64 iso_loop_dev=$imgdevpath iso_loop_path=$isofile
+#	initrd (loop)/boot/initramfs_x86_64.img
+#LINUX boot/x86_64/vmlinuz-linux-archassault
+#INITRD boot/x86_64/archiso.img
+#APPEND archisobasedir=arch archisolabel=ArchAssault-0.1
+#MENU LABEL Boot ArchAssault Project (i686)
+#LINUX boot/i686/vmlinuz-linux-archassault
+#INITRD boot/i686/archiso.img
+#APPEND archisobasedir=arch archisolabel=ArchAssault-0.1	
+}
+fi
+fi
+
+if [ -e "$isofpath/backbox.iso" ]; then
+menuentry "Backbox live ISO"  --unrestricted --class backbox{
+    set isoname=backbox.iso ; CHECK_MNU_FOLDER
+    set root=$root2
+    loopback loop $isofile
+    set gfxpayload=keep
+	linux	(loop)/casper/vmlinuz.efi  file=/cdrom/preseed/backbox.seed boot=casper iso-scan/filename=$isofile quiet splash --
+	initrd	(loop)/casper/initrd.gz
+	boot
+	}
+fi
+
+if $BIT64; then 
+if [ -e "$isofpath/blackarchlinux.iso" ]; then
+menuentry "BlackArch Linux (x86_64)" --unrestricted --class arch {
+    set isoname=blackarchlinux.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=text
+	set root=$root2
+	loopback loop $isofile
+	probe -l (loop) --set=looplabel
+	set imgdevpath="/dev/disk/by-uuid/$root2uuid"
+	linux (loop)/blackarch/boot/x86_64/vmlinuz archisobasedir=blackarch archisolabel=$looplabel img_dev=$imgdevpath img_loop=$isofile
+	initrd (loop)/blackarch/boot/x86_64/archiso.img
+	boot
+}
+fi
+fi
+# untested 32-bit
+#if $BIT32; then
+if [ -e "$isofpath/blackarchlinux32.iso" ]; then
+menuentry "BlackArch Linux (32-bit)" --unrestricted --class arch {
+    set isoname=blackarchlinux32.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=text
+	set root=$root2
+	loopback loop $isofile
+	probe -l (loop) --set=looplabel
+	set imgdevpath="/dev/disk/by-uuid/$root2uuid"
+	linux (loop)/blackarch/boot/i686/vmlinuz archisobasedir=blackarch archisolabel=$looplabel img_dev=$imgdevpath img_loop=$isofile
+	initrd (loop)/blackarch/boot/i686/archiso.img
+	boot
+}
+#fi
+fi
+
+#deft8 x86_64 xEFI64 MBR64
+if [ -e "$isofpath/deftz.iso" ]; then
+menuentry "DEFT-zero live ISO" --unrestricted --class deft {
+	set isoname=deftz.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	set gfxpayload=keep
+	linux	(loop)/casper/vmlinuz file=/cdrom/preseed/lubuntu.seed boot=casper iso-scan/filename=$isofile quiet splash --
+	initrd	(loop)/casper/initrd.lz
+	boot
+}
+fi
+
+if $BIT64; then
+if [ -e "$isofpath/fedora-security.iso" ]; then
+menuentry "Fedora Live Security ISO (x86_64)" --unrestricted --class fedora {
+    set isoname=fedora-security.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+	loopback loop $isofile
+	probe -u (loop) --set=loopuuid
+	set id=UUID=$loopuuid
+	linux (loop)/isolinux/vmlinuz0 root=live:UUID=$loopuuid iso-scan/filename=$isofile rd.live.image
+	initrd (loop)/isolinux/initrd0.img
+	boot
+}
+fi
+fi
+
+# ####### KALI ########
+if $BIT64; then
+if [ -e "$isofpath/kali.iso" ]; then
+menuentry "Kali 64-bit live ISO" --unrestricted --class kali {
+	set isoname=kali.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/live/vmlinuz findiso=$isofile boot=live noconfig=sudo username=root hostname=kali noswap --
+	initrd (loop)/live/initrd.img
+	boot
+}
+fi
+fi
+
+if [ -e "$isofpath/kali32.iso" ]; then
+menuentry "Kali 32-bit live ISO" --unrestricted --class kali {
+	set isoname=kali32.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/live/vmlinuz findiso=$isofile boot=live noconfig=sudo username=root hostname=kali noswap --
+	initrd (loop)/live/initrd.img
+	boot
+}
+fi
+
+if $BIT64; then
+if [ -e "$isofpath/kali-light.iso" ]; then
+menuentry "Kali light live ISO" --unrestricted --class kali {
+	set isoname=kali-light.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/live/vmlinuz findiso=$isofile boot=live noconfig=sudo username=root hostname=kali noswap --
+	initrd (loop)/live/initrd.img
+	boot
+}
+fi
+fi
+
+if [ -e "$isofpath/kali-light32.iso" ]; then
+menuentry "Kali light 32-bit live ISO" --unrestricted --class kali {
+	set isoname=kali-light32.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/live/vmlinuz findiso=$isofile boot=live noconfig=sudo username=root hostname=kali noswap --
+	initrd (loop)/live/initrd.img
+	boot
+}
+fi
+
+
+# no iso-scan/filename or other cheat code! needs to be extracted
+if [ -e "$isofpath/nodezero.iso" ]; then
+menuentry "NodeZero live ISO (DOES NOT WORK - no cheat codes?)" --unrestricted --class nodezero {
+	set isoname=nodezero.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+	loopback loop $isofile
+	linux	(loop)/casper/vmlinuz iso-scan/filename=$isofile boot=casper quiet splash --
+	initrd	(loop)/casper/initrd.gz
+	boot
+}
+fi
+
+#WORKS MBR64 MBR32 EFI32 EFI64
+if [ -e "$isofpath/nst.iso" ]; then
+menuentry "Network Security Toolkit live ISO GUI" --unrestricted --class nts {
+	set isoname=nst.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	loopback loop $isofile
+	probe -u (loop) --set=loopuuid
+	set id=UUID=$loopuuid
+	#set graphics mode for UEFI boot or else no display!
+	set gfxpayload=1024x768,800x600
+	linux	(loop)/isolinux/vmlinuz0 iso-scan/filename=$isofile root=UUID=$loopuuid           rootfstype=auto ro rd.live.image rd.luks=0 rd.md=0 rd.dm=0 audit=0 systemd.unit=graphical.target nstrelocate=false
+#from iso                                                      root=CDLABEL=nst-22-7334.i686 rootfstype=auto ro rd.live.image rd.luks=0 rd.md=0 rd.dm=0 audit=0 systemd.unit=graphical.target nstrelocate=false
+#default is systemd.unit=multi-user.target
+	initrd	(loop)/isolinux/initrd0.img
+	boot
+}
+fi
+
+if $MBR; then
+if [ -e "$isofpath/ophcrack.iso" ]; then
+menuentry "Ophcrack" --unrestricted --class lock {
+    set isoname=ophcrack.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+	if [ ! -e /tables ] ; then echo WARNING: No \\tables folder found in $root2! ; echo Press a key to continue... ; read ; fi
+	loopback loop $isofile
+	linux (loop)/boot/bzImage rw root=/dev/null vga=normal lang=C kmap=us screen=1024x768x16 autologin
+	initrd (loop)/boot/rootfs.gz
+	boot
+}
+fi
+fi
+
+if $BIT64; then
+if [ -e "$isofpath/parrot.iso" ]; then
+menuentry "Parrot live ISO (amd64)" --unrestricted --class parrot {
+    set isoname=parrot.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+    loopback loop $isofile
+	linux		(loop)/live/vmlinuz boot=live config boot=live noconfig=sudo username=root hostname=parrot union=overlay boot=live noconfig=sudo username=root hostname=parrot union=overlay findiso=$isofile
+	initrd		(loop)/live/initrd.img
+	boot
+}
+fi
+fi
+
+#WORKS MBR32 MBR64
+if [ -e "$isofpath/tails.iso" ]; then
+menuentry "Tails live ISO" --unrestricted --class tails{
+	set isoname=tails.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+	loopback loop $isofile
+	linux (loop)/live/vmlinuz findiso=$isofile boot=live config  apparmor=1 security=apparmor nopersistent noprompt timezone=Etc/UTC block.events_dfl_poll_msecs=1000 splash noautologin module=Tails  quiet
+	initrd (loop)/live/initrd.img
+	boot
+}
+fi
+
+
+#WORKS MBR32 MBR64 EFI64 EFI32 (failsafe may fail to boot!
+if [ -e "$isofpath/wt.iso" ]; then
+menuentry "Weakerthan live ISO" --unrestricted --class weakerthan {
+	set isoname=wt.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+	loopback loop $isofile
+	linux (loop)/live/vmlinuz findiso=$isofile boot=live
+	initrd	(loop)/live/initrd.img
+	boot
+}
+fi
+#MBR32 MBR64 EFI64 EFI32 (failsafe may fail to boot!
+if [ -e "$isofpath/wt.iso" ]; then
+menuentry "Weakerthan live ISO (failsafe)" --unrestricted --class weakerthan {
+	set isoname=wt.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+	loopback loop $isofile
+	linux	(loop)/live/vmlinuz findiso=$isofile boot=live config noapic noapm nodma nomce nolapic pci=nomsi nomodeset radeon.modeset=0 nouveau.modeset=0 nosmp vga=normal
+	initrd	(loop)/live/initrd.img
+	boot
+}
+fi
+

@@ -1,0 +1,35 @@
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+#L64 L32 U64 U32 WORKS - make USB drive using Phoenix utility and copy Phoenix folder
+if [ -e "$root2$isoextpath/phoenix/ramdisk.img" ]; then
+menuentry 'Phoenix OS' --unrestricted --class phoenix {
+	set fldname=phoenix
+	search --file --no-floppy --set=per $isoextpath/$fldname/data.img
+	clear
+	if [ ! "${per}" = "" ]; then
+		echo "Persistence file data.img file found."
+	else
+		echo "Note: No data.img persistence file found in $root2$isoextpath/$fldname."
+		sleep 2
+	fi
+	set root=$root2
+	linux $isoextpath/$fldname/kernel root=/dev/ram0 androidboot.hardware=android_x86  DATA=$isoextpath/$fldname vga=788 SRC=$isoextpath/$fldname xquiet
+	initrd $isoextpath/$fldname/initrd.img
+	boot
+}
+fi

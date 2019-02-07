@@ -1,0 +1,39 @@
+# GRUB2 MENU DEFAULT SETTINGS
+# ===========================
+
+# Only required in \_ISO\XXX\grub2 folder   (not in \_ISO\XXX\MNU\grub2 folder)
+# lines which are configuration settings begin with ### - remove the ### for them to take affect
+
+#default menu entry to highlight (0-n)
+###set default=2
+# timeout for highlighted menu entry in seconds, -1=off, 0=immediate
+###set timeout=-1
+
+# set delay in seconds for showing user what .cfg files are loaded for each menu (0-9), if use 10 or more, then will prompt user to press ENTER key - useful for error messages, etc.
+# Note: Affects all menus
+###set showdelay=10
+
+# To protect the menus from being edited or getting access to the grub2 console, set superuser names and a password for each one
+###set superusers="easy2boot,root"
+###password easy2boot easy2boot
+###password root easy2boot
+
+#play a tune when menu loads - 888=tempo, then pairs of  FREQ DURATION
+###echo beep beep!
+###play 888 262 3 247 3 262
+
+#Do not show PassMark MemTest86 (UEFI) in Main menu or Utilities menu  ( or use 'unset NOPASSMARK' if you want Memtest in the menu)
+###set NOPASSMARK=1
+###unset NOPASSMARK
+
+#Do not show Boot from HD0 [F7] menu (only in MBR mode) in Main menu (only effective if MAINMENU\grub2 folder)
+###set NOHDBOOT=true
+
+# Suppress sub-menu entries in Main grub2 menu
+###set NOAV=true
+###set NOBACKUP=true
+###set NOUTILS=true
+###set NOLINUX=true
+
+
+

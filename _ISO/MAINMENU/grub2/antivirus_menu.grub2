@@ -1,0 +1,122 @@
+#ANTIVIRUS MENU
+
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+
+
+#WORKS avg_arl_cdi_all_120_160420a12074.iso MBR32 MBR64
+if $MBR; then
+if [ -e "$isofpath/avg.iso" ]; then
+menuentry "AVG Rescue CD" --unrestricted --class avg{
+    set isoname=avg.iso ; CHECK_MNU_FOLDER
+	if $MBR; then	set gfxpayload=text ; fi
+	if $EFI; then	set gfxpayload=keep ; fi
+	set root=$root2
+    loopback loop $isofile
+	# use safe mode boot
+   	linux	(loop)/isolinux/vmlinuz root=/dev/ram0 real_root=/dev/loop0 max_loop=255 init=linuxrc initrd=initrd.lzm video=vesafb:off reboot=bios
+   	initrd	(loop)/isolinux/initrd.lzm
+
+# normal mode
+# 	linux	(loop)/isolinux/vmlinuz root=/dev/ram0 real_root=/dev/loop0 max_loop=255 initrd=initrd.lzm init=linuxrc vga=791  reboot=bios video=vesafb
+	boot
+}
+fi
+fi
+
+# rescue-system.iso 2016 
+if [ -e "$isofpath/avira.iso" ]; then
+menuentry "Avira Rescue live CD" --unrestricted --class avira{
+	clear
+	if [ -e "$root2$isoextpath/avira/casper-rw" ]; then echo "Avira with persistence ($isoextpath/avira/casper-rw present) " ; fi
+	if [ ! -e "$root2$isoextpath/avira/casper-rw" ]; then echo "Avira with no persistence ($isoextpath/avira/casper-rw not present)" ; fi
+	echo
+	echo "Rescue System is now starting. If your screen stays black for a long time, please disable Secure Boot in your BIOS configuration. If this issue persists or you require additional assistance, please contact Avira Support:"
+	echo "> http://www.avira.com/en/support"
+	echo
+	echo
+	echo Press ENTER to continue...
+	read
+    set isoname=avira.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=800x600
+	set root=$root2
+	loopback loop $isofile
+	linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/ubuntu.seed boot=casper  iso-scan/filename=$isofile live-media-path=casper -- debian-installer/language=en console-setup/layoutcode=en persistent persistent-path=$isoextpath/$fldname
+	initrd	(loop)/casper/initrd.lz
+	boot
+
+#	linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/ubuntu.seed boot=casper iso-scan/filename=$isofile quiet splash --
+#	set quiet=1 ignore_uuid 
+#cheat codes: persistent non-persistent persistent-path= live-media-path= toram todisk=	 uuid= ignore_uuid ip=
+	
+}
+fi
+
+if $FAT; then
+# bitdefender-rescue-cd.iso  works for all!
+if [ -e "$isofpath/bitdefender.iso" ]; then
+	menuentry "Bitdefender Rescue CD" --unrestricted --class icon-bit {
+    set isoname=bitdefender.iso ; CHECK_MNU_FOLDER 
+		insmod video_bochs
+		insmod video_cirrus
+		set root=$root2
+        loopback loop $isofile
+		linux	(loop)/boot/kernel.i386-pc root=/dev/ram0 real_root=/dev/loop0 loop=/rescue/livecd.squashfs cdroot_marker=/rescue/livecd.squashfs initrd udev cdroot scandelay=10 quiet splash lang=en isoboot=$isofile
+		initrd	(loop)/boot/initfs.i386-pc 
+	boot
+}
+fi
+fi
+
+
+#drweb-livedisk-900-cd.iso - cannot get to work - no iso cheat code in \scripts\casper script! only live-media-path= persistent persistent-path=  UUID= ignore_uuid
+if [ -e "$isofpath/drweb.iso" ]; then
+menuentry "DrWeb live CD - DOES NOT WORK - please use Extracted Files!" --unrestricted --class drweb{
+    set isoname=drweb.iso ; CHECK_MNU_FOLDER
+   	set root=$root2
+    loopback loop $isofile
+	linux	(loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile usbroot findiso=$isofile isofrom=$isofile ignore_uuid --
+##boot=casper  quiet splash --
+	initrd	(loop)/casper/initrd.lz
+##linux /base/antivirus/DrWeb/vmlinuz boot=casper live-media-path=/base/antivirus/DrWeb persistent persistent-path=drweb locale=ru_RU quiet splash --
+##UUID=$root2uuid
+	boot
+}
+fi
+
+
+
+#NO CHEAT CODES! DOES NOT WORK
+if [ -e "$isofpath/eset.iso" ]; then
+menuentry "ESET System Rescue (does not work!)" --unrestricted --class eset{
+    set isoname=eset.iso ; CHECK_MNU_FOLDER
+	set root=$root2
+	set gfxpayload=1024x768,800x600
+	loopback loop $isofile
+	linux	(loop)/casper/vmlinuz root=/dev/ram0 real_root=/dev/loop0 boot=casper iso-scan/filename=$isofile
+	initrd	(loop)/casper/initrd.lz
+#	kernel vmlinuz
+#   append max_loop=255 vga=791 initrd=initrd.lzm init=linuxrc reboot=bios
+	boot
+}
+fi
+
+
+
+
+

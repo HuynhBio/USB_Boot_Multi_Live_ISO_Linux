@@ -1,0 +1,37 @@
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+# only tested on FAT32 so far - with persistence
+#drweb-livedisk-900-cd.iso  extract iso to \ISO_Extract\drweb  (probably only casper folder needed)
+#EFI64 MBR64 EFI32 MBR32
+if [ -e "$root2$isoextpath/drweb/casper/vmlinuz" ]; then
+menuentry "DrWeb live CD (extracted)" --unrestricted --class drweb{
+   	set root=$root2
+	set fldname=drweb
+	set gfxpayload=1024x768
+	echo If you see a \'Please provide a name for this Disk\' message,
+	echo Press ALT+F1 - then type xxx - then press ENTER key to continue booting
+	echo Tip: to prevent corruption of the persistence file, always shutdown the linux nicely!
+	echo
+	echo Press the ENTER key to continue...
+	read
+	# must use ignore_uuid  !!!
+	linux  $isoextpath/$fldname/casper/vmlinuz  boot=casper live-media-path=$isoextpath/$fldname/casper ignore_uuid persistent persistent-path=$isoextpath/$fldname --  
+	initrd $isoextpath/$fldname/casper/initrd.lz
+	boot
+}
+fi

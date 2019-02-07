@@ -1,0 +1,39 @@
+#EASYRE 10
+
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+#Easy Recovery Essentials for Win10
+
+# Extract \easyre.ufs.uzip and \launchcode to root of partition 2 (FAT32 only)
+# optional - delete easyre.ufs.uzip from ISO and re-save to make a smaller ISO file
+# EasyRE_Win10.iso neosmart.net
+if $FAT; then
+if $MBR; then
+if [ -e "$isofpath/easyre10.iso" ]; then
+menuentry "Easy Recovery Essentials for Windows 10" --unrestricted --class win {
+	set isoname=easyre10.iso ; CHECK_MNU_FOLDER
+	if $MBR; then	set gfxpayload=text ; fi
+	set root=$root2
+	loopback loop $isofile
+	set root=(loop)
+	configfile /boot/grub/grub.cfg
+	boot
+}
+fi
+fi
+fi

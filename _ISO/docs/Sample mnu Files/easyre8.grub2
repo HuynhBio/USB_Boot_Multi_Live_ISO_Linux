@@ -1,0 +1,33 @@
+#EASYRE 8
+
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+#WORKS on MBR64/MBR32/EFI64/EFI32  NTFS and FAT32
+if [ -e "$isofpath/easyre8.iso" ]; then
+menuentry "Easy Recovery Essentials for Windows 8" --unrestricted --class win {
+    set isoname=easyre8.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=1024x768,800x600
+	#set gfxpayload=text
+	set mbrcrcs=on
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/boot/bzImage rw root=/dev/null autologin sound=noconf kmap=en acpi=off noapic nolapic noacpi nomodeset @LXV3NSAtZTE0MTg1NzgwMzUgLXpiYmIxNjIwMjM3MTZmYTQ3ZTg2OGIwZTg0YWVlOGY4Y2Y3NDdhMTE5
+	initrd (loop)/boot/rootfs.gz
+	boot
+}
+fi

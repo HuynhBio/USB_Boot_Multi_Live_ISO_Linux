@@ -1,0 +1,142 @@
+#UTILITIES MENU
+
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+
+#WORKS L64 U64   PMAGIC.ISO
+if $BIT64; then
+if [ -e "$isofpath/pmagic.iso" ]; then
+menuentry 'Boot Parted Magic 64' --unrestricted --class pmagic{
+    set isoname=pmagic.iso ; CHECK_MNU_FOLDER
+	echo 'Loading Parted Magic 64 live ISO...'
+	#set gfxpayload=keep
+	set root=$root2
+    loopback loop $isofile
+	linux (loop)/pmagic/bzImage64 iso_filename=$isofile edd=on vga=normal eject=no load_ramdisk=1
+	initrd (loop)/pmagic/initrd.img (loop)/pmagic/fu.img (loop)/pmagic/m64.img
+	boot
+}
+fi
+fi
+
+#WORKS U32 L32
+# for 32-bit use bzImage and m32.img
+if $BIT32; then
+if [ -e "$isofpath/pmagic.iso" ]; then
+menuentry 'Boot Parted Magic 32' --unrestricted --class pmagic{
+    set isoname=pmagic.iso ; CHECK_MNU_FOLDER
+	echo 'Loading Parted Magic 32 live ISO...'
+	#set gfxpayload=keep
+	set root=$root2
+    loopback loop $isofile
+#	linux (loop)/pmagic/bzImage iso_filename=$isofile edd=on vga=normal boot=live eject=no
+	linux (loop)/pmagic/bzImage iso_filename=$isofile eject=no load_ramdisk=1
+	initrd (loop)/pmagic/initrd.img (loop)/pmagic/fu.img (loop)/pmagic/m32.img
+	boot
+
+}
+fi
+fi
+
+
+if $BIT64; then
+if [ -e "$isofpath/prgdm.iso" ]; then
+menuentry "Start Paragon-RCD in normal mode (EFI 64-bit)" --unrestricted --class paragon{
+    set isoname=prgdm.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=keep
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/boot/x86_64/loader/linux ramdisk_size=512000 ramdisk_blocksize=4096 vga=0x314 splash=silent panic=1
+	initrd (loop)/boot/x86_64/loader/initrd
+boot
+}
+menuentry "Start Paragon-RCD in safe mode (EFI 64-bit)" --unrestricted --class paragon{
+    set isoname=prgdm.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=keep
+	set root=$root2
+	loopback loop $isofile
+	linux (loop)/boot/x86_64/loader/linux ramdisk_size=512000 ramdisk_blocksize=4096 splash=silent ide=nodma apm=off noresume edd=off powersaved=off nohz=off highres=off processsor.max+cstate=1 vga=0x314 panic=1 nomodeset x11failsafe
+	initrd (loop)/boot/x86_64/loader/initrd
+	boot
+}
+fi
+fi
+
+if $BIT64; then
+if [ -e "$isofpath/pwh.iso" ]; then
+menuentry "MiniTool Partition Wizard Boot Disk 9 (64-bit)" --unrestricted --class minitool{
+    set isoname=pwh.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=keep
+	set root=$root2
+	loopback loop $isofile
+	linux	(loop)/casper/vmlinuz.efi ramdisk_size=409600 root=/dev/ram0 rw
+	initrd	(loop)/casper/tinycore.gz
+	boot
+}
+fi
+fi
+#if $BIT32; then
+if [ -e "$isofpath/pwh32.iso" ]; then
+menuentry "MiniTool Partition Wizard Boot Disk 9 (32-bit)" --unrestricted --class minitool{
+    set isoname=pwh32.iso ; CHECK_MNU_FOLDER
+	set gfxpayload=keep
+	set root=$root2
+	loopback loop $isofile
+	linux	(loop)/casper/vmlinuz boot=casper initrd=/casper/tinycore.gz ramdisk_size=409600 root=/dev/ram0 rw
+	initrd	(loop)/casper/tinycore.gz
+	boot
+}
+#fi
+fi
+
+# KONBOOT
+
+if $EFI64; then
+if [ -e "$isofpath/konbootx64.efi" ]; then
+menuentry "Konboot EFI 64" --unrestricted --class lock {
+    set isoname=konbootx64.efi ; CHECK_MNU_FOLDER
+	chainloader $ifp/konbootx64.efi
+	boot
+}
+fi
+fi
+
+if $EFI32; then
+if [ -e "$isofpath/konbootia32.efi" ]; then
+menuentry "Konboot EFI 32" --unrestricted --class lock {
+    set isoname=konbootia32.efi ; CHECK_MNU_FOLDER
+	chainloader $ifp/konbootia32.efi
+	boot
+}
+fi
+fi
+
+#WORKS (tested on Win10 64-bit with konboot 2.5)
+if $MBR; then
+if [ -e "$isofpath/konboot.img" ]; then
+menuentry "Konboot (BIOS)" --unrestricted --class lock {
+	set isoname=konboot.img ; CHECK_MNU_FOLDER
+	insmod linux16
+	drivemap -s (hd0) (hd1)
+	linux16 ($root)/boot/grub/memdisk floppy
+	initrd16 $ifp/konboot.img
+	boot
+}
+fi
+fi
+

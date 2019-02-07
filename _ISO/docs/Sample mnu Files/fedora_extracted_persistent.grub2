@@ -1,0 +1,24 @@
+# Persistent file in \LiveOS, vol label=LIVE, name = overlay-LIVE-<UUID>
+#1. Extract from ISO the \LiveOS folder to root of FAT32 drive
+#2. Copy vmlinuz0 and initrd0.img to \LiveOS folder
+#3. Create ext2 file of correct name in \LiveOS folder (volume name of ext2 file = LIVE)
+# see http://www.rmprepusb.com/tutorials/fedora
+#WORKS - needs FAT32, not NTFS!! Fedora-Live-Workstation-i686-23-10.iso
+if $FAT; then
+if [ -e "$root2/LiveOS/vmlinuz0" ]; then
+menuentry "Fedora Live Workstation EXTRACTED PERSISTENT (FAT32-only)" --unrestricted --class fedora {
+	set root=$root2
+	probe -l $root2 --set=root2vol
+	echo "Persistent file should be $root2/LiveOS/overlay-$root2vol-$root2uuid"
+	echo "Persistent file Volume name should be LIVE"
+	if [ ! -e $root2/LiveOS/overlay-$root2vol-$root2uuid ] ; then echo ERROR: $root2/LiveOS/overlay-$root2vol-$root2uuid not found! ; echo Press ENTER to continue ; read ; fi
+	loopback loopo $root2/LiveOS/overlay-$rootvol-$root2uuid
+	probe -l (loopo) --set=loopol
+	if [ ! $loopol = "LIVE" ]; then echo "ERROR: $root2/LiveOS/overlay-$root2vol-$root2uuid has volume label of $loopol, not LIVE!" ; read ; fi
+	set gfxpayload=1024x768,800x600
+	linux /LiveOS/vmlinuz0 root=live:UUID=$root2uuid rd.live.overlay=UUID=$root2uuid live_dir=/LiveOS rootfstype=auto rw rd.live.image quiet splash  rhgb rd.luks=0 rd.md=0 rd.dm=0 nomodeset
+	initrd /LiveoS/initrd0.img
+	boot
+	}
+fi
+fi

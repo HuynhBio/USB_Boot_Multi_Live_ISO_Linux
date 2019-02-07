@@ -1,0 +1,29 @@
+#$isofpath           e.g. (hd0,msdos2)/_ISO/LINUX - use only in  if [ -e  tests
+#$root2              e.g. (hd0,msdos2)  partition containing payload files
+#$root               e.g. hd0,msdos1    boot partition with grub2 on it
+#$root2uuid          e.g. 1234-2123-33  (uuid of $root2)
+
+#Special variables: MBR EFI MBR32 MBR64 EFI32 EFI64 BIT32 BIT64    FAT (true if filesystem on ptn2 is FAT)
+#Examples:
+#if $BIT32 ; then echo 32-bit ; fi
+#if ! $BIT64 ; then echo not 64-bit ; fi
+#if [ $BIT64 = true and $FAT = true ] ; then echo 64-bit MBR on FAT partititon ; fi
+#if [ $BIT64 = true and $EFI = true ] ; then echo 64-bit EFI (same as \$EFI64) ; fi
+
+#CHECK_MNU_FOLDER sets these variables on return
+#$ip                 e.g. /_ISO/LINUX
+#$ifp                e.g. (hd0,msdos2)/_ISO/LINUX
+#$isofile            e.g. /_ISO/LINUX/xxxx.iso 
+
+# ANDROID is extracted to isoextpath
+#android-x86-5.1-rc1.iso L64
+if $MBR; then
+if [ -e "$root2$isoextpath/android-x86/ramdisk.img" ]; then
+menuentry 'Android OS' --unrestricted --class android-x86 {
+#	search --file --no-floppy --set=root $isoextpath/android-x86/system.sfs
+	set root=$root2
+	linux $isoextpath/android-x86/kernel root=/dev/ram0 androidboot.hardware=android_x86 androidboot.selinux=permissive quiet DATA=$isoextpath/android-x86
+	initrd $isoextpath/android-x86/initrd.img
+}
+fi
+fi
