@@ -20,35 +20,35 @@
 #WORKS
 #archlinux-2016.05.01-dual.iso  U64 L64
 if $BIT64; then
-if [ -e "$isofpath/arch.iso" ]; then
-menuentry "Arch Linux 64-bit (x86_64 dual)" --unrestricted --class arch {
-    set isoname=arch.iso ; CHECK_MNU_FOLDER
-	probe -u $root2 --set=root2uuid
-	set imgdevpath="/dev/disk/by-uuid/$root2uuid"
-	set root=$root2
-	loopback loop $isofile
-	linux (loop)/arch/boot/x86_64/vmlinuz archisodevice=/dev/loop0 img_dev=$imgdevpath img_loop=$isofile
-	initrd (loop)/arch/boot/x86_64/archiso.img
-	boot
-}
-fi
+	if [ -e "$isofpath/arch.iso" ]; then
+		menuentry "Arch Linux 64-bit (x86_64 dual)" --unrestricted --class arch {
+			set isoname=arch.iso ; CHECK_MNU_FOLDER
+			probe -u $root2 --set=root2uuid
+			set imgdevpath="/dev/disk/by-uuid/$root2uuid"
+			set root=$root2
+			loopback loop $isofile
+			linux (loop)/arch/boot/x86_64/vmlinuz archisodevice=/dev/loop0 img_dev=$imgdevpath img_loop=$isofile
+			initrd (loop)/arch/boot/x86_64/archiso.img
+			boot
+		}
+	fi
 fi
 
 #archlinux-2016.05.01-dual.iso  U64 L64
 if $BIT32; then
-if [ -e "$isofpath/arch.iso" ]; then
-menuentry "Arch Linux 32-bit (x86_64 dual)" --unrestricted --class arch {
-    set isoname=arch.iso ; CHECK_MNU_FOLDER
-	probe -u $root2 --set=root2uuid
-	set imgdevpath="/dev/disk/by-uuid/$root2uuid"
-	set root=$root2
-	loopback loop $isofile
-	linux (loop)/arch/boot/i686/vmlinuz archisodevice=/dev/loop0 img_dev=$imgdevpath img_loop=$isofile archisobasedir=arch
-	initrd (loop)/arch/boot/i686/archiso.img
-	boot
-#INITRD boot/intel_ucode.img,boot/i686/archiso.img archisobasedir=arch archisolabel=ARCH_201605
-	}
-fi
+	if [ -e "$isofpath/arch.iso" ]; then
+		menuentry "Arch Linux 32-bit (x86_64 dual)" --unrestricted --class arch {
+			set isoname=arch.iso ; CHECK_MNU_FOLDER
+			probe -u $root2 --set=root2uuid
+			set imgdevpath="/dev/disk/by-uuid/$root2uuid"
+			set root=$root2
+			loopback loop $isofile
+			linux (loop)/arch/boot/i686/vmlinuz archisodevice=/dev/loop0 img_dev=$imgdevpath img_loop=$isofile archisobasedir=arch
+			initrd (loop)/arch/boot/i686/archiso.img
+			boot
+			#INITRD boot/intel_ucode.img,boot/i686/archiso.img archisobasedir=arch archisolabel=ARCH_201605
+		}
+	fi
 fi
 
 
@@ -56,129 +56,129 @@ fi
 #CentOS-7-x86_64-DVD-1511.iso  NEEDS FAT32 but >4GB!
 #WORKS CentOS-7.0-1406-x86_64-Minimal
 if $EFI64; then
-if [ -e "$isofpath/centos.iso" ]; then
-menuentry "CentOS 7 Install(FAT32-only)" --unrestricted --class centos{
-    set isoname=centos.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	probe -u (loop) --set=loopuuid
-	set id=UUID=$loopuuid
-	echo "linuxefi..."
-	linuxefi (loop)/images/pxeboot/vmlinuz iso-scan/filename=$isofile inst.stage2=hd:UUID=$loopuuid quiet
-	# boot=images
-	echo "initrdefi..."
-	initrdefi (loop)/images/pxeboot/initrd.img
-	echo "booting..."
-	boot
-}
-fi
+	if [ -e "$isofpath/centos.iso" ]; then
+		menuentry "CentOS 7 Install(FAT32-only)" --unrestricted --class centos{
+			set isoname=centos.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			probe -u (loop) --set=loopuuid
+			set id=UUID=$loopuuid
+			echo "linuxefi..."
+			linuxefi (loop)/images/pxeboot/vmlinuz iso-scan/filename=$isofile inst.stage2=hd:UUID=$loopuuid quiet
+			# boot=images
+			echo "initrdefi..."
+			initrdefi (loop)/images/pxeboot/initrd.img
+			echo "booting..."
+			boot
+		}
+	fi
 fi
 
 #WORKS
 if $MBR64; then
-if [ -e "$isofpath/centos.iso" ]; then
-menuentry "CentOS 7 Install (FAT32-only)" --unrestricted --class centos{
-    set isoname=centos.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	probe -u (loop) --set=loopuuid
-	set id=UUID=$loopuuid
-	linux (loop)/images/pxeboot/vmlinuz boot=images iso-scan/filename=$isofile inst.stage2=hd:UUID=$loopuuid
-	initrd (loop)/images/pxeboot/initrd.img
-	boot
-}
-fi
+	if [ -e "$isofpath/centos.iso" ]; then
+		menuentry "CentOS 7 Install (FAT32-only)" --unrestricted --class centos{
+			set isoname=centos.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			probe -u (loop) --set=loopuuid
+			set id=UUID=$loopuuid
+			linux (loop)/images/pxeboot/vmlinuz boot=images iso-scan/filename=$isofile inst.stage2=hd:UUID=$loopuuid
+			initrd (loop)/images/pxeboot/initrd.img
+			boot
+		}
+	fi
 fi
 
 
 #WORKS
 if [ -e "$isofpath/clonezilla.iso" ]; then
-menuentry "Clonezilla" --unrestricted --class clonezilla{
-    set isoname=clonezilla.iso ; CHECK_MNU_FOLDER
-	gfxpayload=keep
-	set root=$root2
-	loopback loop $isofile
-	linux (loop)/live/vmlinuz findiso=$isofile boot=live union=overlay username=user config
-	initrd (loop)/live/initrd.img
-boot
-}
+	menuentry "Clonezilla" --unrestricted --class clonezilla{
+		set isoname=clonezilla.iso ; CHECK_MNU_FOLDER
+		gfxpayload=keep
+		set root=$root2
+		loopback loop $isofile
+		linux (loop)/live/vmlinuz findiso=$isofile boot=live union=overlay username=user config
+		initrd (loop)/live/initrd.img
+		boot
+	}
 fi
 
 if $BIT64; then
-if [ -e "$isofpath/chromixium.iso" ]; then
-menuentry "Chromixium Live ISO (amd64 UEFI)" --unrestricted --class chromixium{
-    set isoname=chromixium.iso ; CHECK_MNU_FOLDER
-	set gfxpayload=keep
-	set root=$root2
-	loopback loop $isofile
-	linux	(loop)/casper/vmlinuz.efi  file=/cdrom/preseed/chromixium.seed boot=casper iso-scan/filename=$isofile quiet splash --
-	initrd	(loop)/casper/initrd.gz
-boot
-}
-fi
+	if [ -e "$isofpath/chromixium.iso" ]; then
+		menuentry "Chromixium Live ISO (amd64 UEFI)" --unrestricted --class chromixium{
+			set isoname=chromixium.iso ; CHECK_MNU_FOLDER
+			set gfxpayload=keep
+			set root=$root2
+			loopback loop $isofile
+			linux	(loop)/casper/vmlinuz.efi  file=/cdrom/preseed/chromixium.seed boot=casper iso-scan/filename=$isofile quiet splash --
+			initrd	(loop)/casper/initrd.gz
+			boot
+		}
+	fi
 fi
 
 #WORKS CubLinux-1.0RC-amd64.iso  U64 and L64
 if $BIT64; then
-if [ -e "$isofpath/cub.iso" ]; then
-menuentry "Cub Chromium+Ubuntu Live ISO (amd64 UEFI)" --unrestricted --class chromixium{
-    set isoname=cub.iso ; CHECK_MNU_FOLDER
-	set gfxpayload=keep
-	set root=$root2
-	loopback loop $isofile
-	linux	(loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$isofile quiet splash --
-	initrd	(loop)/casper/initrd.gz
-boot
-}
-fi
+	if [ -e "$isofpath/cub.iso" ]; then
+		menuentry "Cub Chromium+Ubuntu Live ISO (amd64 UEFI)" --unrestricted --class chromixium{
+			set isoname=cub.iso ; CHECK_MNU_FOLDER
+			set gfxpayload=keep
+			set root=$root2
+			loopback loop $isofile
+			linux	(loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$isofile quiet splash --
+			initrd	(loop)/casper/initrd.gz
+			boot
+		}
+	fi
 fi
 
 #WORKS CubLinux-1.0RC-amd64.iso
 if $BIT64; then
-if [ -e "$isofpath/cub.iso" ]; then
-menuentry "Cub Chromium+Ubuntu Install from ISO (amd64 UEFI)" --unrestricted --class chromixium{
-    set isoname=cub.iso ; CHECK_MNU_FOLDER
-	set gfxpayload=keep
-	set root=$root2
-	loopback loop $isofile
-	linux	(loop)/casper/vmlinuz.efi only-ubiquity boot=casper iso-scan/filename=$isofile quiet splash --
-#live-install     boot=casper only-ubiquity initrd=/casper/initrd.gz quiet splash --
-	initrd	(loop)/casper/initrd.gz
-boot
-}
-fi
+	if [ -e "$isofpath/cub.iso" ]; then
+		menuentry "Cub Chromium+Ubuntu Install from ISO (amd64 UEFI)" --unrestricted --class chromixium{
+			set isoname=cub.iso ; CHECK_MNU_FOLDER
+			set gfxpayload=keep
+			set root=$root2
+			loopback loop $isofile
+			linux	(loop)/casper/vmlinuz.efi only-ubiquity boot=casper iso-scan/filename=$isofile quiet splash --
+		#live-install     boot=casper only-ubiquity initrd=/casper/initrd.gz quiet splash --
+			initrd	(loop)/casper/initrd.gz
+			boot
+		}
+	fi
 fi
 
 #WORKS debian-live-8.4.0-amd64-cinnamon-desktop.iso (UEFI64, BIOS64)
 if $BIT64; then
-if [ -e "$isofpath/debian.iso" ]; then
-menuentry "Debian Live (amd64)" --unrestricted --class debian {
-    set isoname=debian.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-    #set background_color=black
-    linux    (loop)/live/vmlinuz boot=live components quiet splash  findiso=$isofile
-    initrd   (loop)/live/initrd.img
-#install  	 linux /install/vmlinuz vga=788  --- quiet    
-#       	 initrd /install/initrd.gz
-#installgui  linux /install/gtk/vmlinuz video=vesa:ywrap,mtrr vga=788  --- quiet
-#    		 initrd /install/gtk/initrd.gz
-	boot
-}
-fi
+	if [ -e "$isofpath/debian.iso" ]; then
+		menuentry "Debian Live (amd64)" --unrestricted --class debian {
+			set isoname=debian.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			#set background_color=black
+			linux    (loop)/live/vmlinuz boot=live components quiet splash  findiso=$isofile
+			initrd   (loop)/live/initrd.img
+		#install  	 linux /install/vmlinuz vga=788  --- quiet    
+		#       	 initrd /install/initrd.gz
+		#installgui  linux /install/gtk/vmlinuz video=vesa:ywrap,mtrr vga=788  --- quiet
+		#    		 initrd /install/gtk/initrd.gz
+			boot
+		}
+	fi
 fi
 
 #debian-8.4.0-amd64-DVD-1.iso  INSTALL ONLY doesn't work as cannot access ISO!
 #if [ -e "$isofpath/debianDVD.iso" ]; then
-#menuentry "Debian Install DVD (amd64 UEFI)" --unrestricted --class debian {
-#   set isoname=debianDVD.iso ; CHECK_MNU_FOLDER
-#   set root=$root2
-#   loopback loop $isofile
-#   set background_color=black
-#   linux    (loop)/install.amd/vmlinuz vga=788  findiso=$isofile --- quiet 
-#   initrd   (loop)/install.amd/initrd.gz
-#	boot
-#}
+#	menuentry "Debian Install DVD (amd64 UEFI)" --unrestricted --class debian {
+#		set isoname=debianDVD.iso ; CHECK_MNU_FOLDER
+#		set root=$root2
+#		loopback loop $isofile
+#		set background_color=black
+#		linux    (loop)/install.amd/vmlinuz vga=788  findiso=$isofile --- quiet 
+#		initrd   (loop)/install.amd/initrd.gz
+#		boot
+#	}
 #fi
 #cannot install as it cannot see 'CD'
 
@@ -186,253 +186,253 @@ fi
 
 #WORKS elementaryos-0.3.2-stable-amd64.20151209.iso
 if $BIT64; then
-if [ -e "$isofpath/elementaryos.iso" ]; then
-menuentry "Elementaryos (amd64 UEFI)" --unrestricted --class elementary{
-    set isoname=elementaryos.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile locale=en_US.UTF-8
-	initrd (loop)/casper/initrd.lz
-boot
-}
-fi
+	if [ -e "$isofpath/elementaryos.iso" ]; then
+		menuentry "Elementaryos (amd64 UEFI)" --unrestricted --class elementary{
+			set isoname=elementaryos.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile locale=en_US.UTF-8
+			initrd (loop)/casper/initrd.lz
+			boot
+		}
+	fi
 fi
 
 #WORKS - needs FAT32, not NTFS!! Fedora-Live-Workstation-i686-23-10.iso
 if $FAT; then
-if [ -e "$isofpath/fedora-workstation.iso" ]; then
-menuentry "Fedora Live Workstation (FAT32-only)" --unrestricted --class fedora {
-    set isoname=fedora-workstation.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	probe -u (loop) --set=loopuuid
-	set id=UUID=$loopuuid
-	linux (loop)/isolinux/vmlinuz0 root=live:$id  iso-scan/filename=$isofile rootfstype=auto ro rd.live.image xquiet nosplash  rhgb rd.luks=0 rd.md=0 rd.dm=0 nomodeset
-	initrd (loop)/isolinux/initrd0.img
-	boot
-}
-fi
+	if [ -e "$isofpath/fedora-workstation.iso" ]; then
+		menuentry "Fedora Live Workstation (FAT32-only)" --unrestricted --class fedora {
+			set isoname=fedora-workstation.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			probe -u (loop) --set=loopuuid
+			set id=UUID=$loopuuid
+			linux (loop)/isolinux/vmlinuz0 root=live:$id  iso-scan/filename=$isofile rootfstype=auto ro rd.live.image xquiet nosplash  rhgb rd.luks=0 rd.md=0 rd.dm=0 nomodeset
+			initrd (loop)/isolinux/initrd0.img
+			boot
+		}
+	fi
 fi
 
 
 #WORKS livedvd-x86-amd64-32ul-20140826_gentoo  (not for true 64-bit)  needs FAT32! 
 if $FAT; then
-if $BIT64; then
-if [ -e "$isofpath/gentoo.iso" ]; then
-menuentry "Gentoo live (FAT32-only)" --unrestricted --class gentoo{
-	set isoname=gentoo.iso ; CHECK_MNU_FOLDER
-	set bootlang=en_US
-	set bootkeymap=us
-	set gfxpayload=keep
-	echo "Language: $bootlang"
-	echo "Keyboard: $bootkeymap"
-	set root=$root2
-	loopback loop $isofile
+	if $BIT64; then
+		if [ -e "$isofpath/gentoo.iso" ]; then
+			menuentry "Gentoo live (FAT32-only)" --unrestricted --class gentoo{
+				set isoname=gentoo.iso ; CHECK_MNU_FOLDER
+				set bootlang=en_US
+				set bootkeymap=us
+				set gfxpayload=keep
+				echo "Language: $bootlang"
+				echo "Keyboard: $bootkeymap"
+				set root=$root2
+				loopback loop $isofile
 
-#32bit	linux (loop)/isolinux/gentoo root=/dev/ram0 init=/linuxrc aufs looptype=squashfs loop=/image.squashfs cdroot isoboot=$isofile vconsole.keymap=$bootkeymap locale=$bootlang $modeset_opt $nox $acpi_opt console=tty1 --
-#32bit	initrd (loop)/isolinux/gentoo.igz
-#64 scandelay=3
+			#32bit	linux (loop)/isolinux/gentoo root=/dev/ram0 init=/linuxrc aufs looptype=squashfs loop=/image.squashfs cdroot isoboot=$isofile vconsole.keymap=$bootkeymap locale=$bootlang $modeset_opt $nox $acpi_opt console=tty1 --
+			#32bit	initrd (loop)/isolinux/gentoo.igz
+			#64 scandelay=3
 
-	linux (loop)/isolinux/gentoo64 root=/dev/ram0 init=/linuxrc aufs looptype=squashfs loop=/image.squashfs cdroot isoboot=$isofile vconsole.keymap=$bootkeymap locale=$bootlang $modeset_opt $nox $acpi_opt console=tty1 --
-	initrd (loop)/isolinux/gentoo64.igz
-	boot
-}
-fi
-fi
+				linux (loop)/isolinux/gentoo64 root=/dev/ram0 init=/linuxrc aufs looptype=squashfs loop=/image.squashfs cdroot isoboot=$isofile vconsole.keymap=$bootkeymap locale=$bootlang $modeset_opt $nox $acpi_opt console=tty1 --
+				initrd (loop)/isolinux/gentoo64.igz
+				boot
+			}
+		fi
+	fi
 fi
 
 
 # uses /dev/sdxx but seems to ignore the device anyway and finds it!
 # WORKS but NOT UEFI-32
 if ! $EFI32; then
-if [ -e "$isofpath/knoppix.iso" ]; then
-menuentry "Knoppix live ISO" --unrestricted --class linux{
-    set isoname=knoppix.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-    loopback loop $isofile
-    linux (loop)/boot/isolinux/linux iso-scan/filename=$isofile  acpi=off keyboard=us lang=us bootfrom=/dev/sdb2$isofile
-    initrd (loop)/boot/isolinux/minirt.gz
-	boot
-}
-fi
+	if [ -e "$isofpath/knoppix.iso" ]; then
+		menuentry "Knoppix live ISO" --unrestricted --class linux{
+			set isoname=knoppix.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux (loop)/boot/isolinux/linux iso-scan/filename=$isofile  acpi=off keyboard=us lang=us bootfrom=/dev/sdb2$isofile
+			initrd (loop)/boot/isolinux/minirt.gz
+			boot
+		}
+	fi
 fi
 
 
 #WORKS (32-bit is untested)
 if $BIT64; then
-if [ -e "$isofpath/linuxmint.iso" ]; then
-menuentry "Linux Mint live ISO (amd64 UEFI)" --unrestricted --class linuxmint {
-    set isoname=linuxmint.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-   	set gfxpayload=keep
-	linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/linuxmint.seed boot=casper iso-scan/filename=$isofile quiet splash --
-	initrd	(loop)/casper/initrd.lz
-	boot
-}
-fi
+	if [ -e "$isofpath/linuxmint.iso" ]; then
+		menuentry "Linux Mint live ISO (amd64 UEFI)" --unrestricted --class linuxmint {
+			set isoname=linuxmint.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			set gfxpayload=keep
+			linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/linuxmint.seed boot=casper iso-scan/filename=$isofile quiet splash --
+			initrd	(loop)/casper/initrd.lz
+			boot
+		}
+	fi
 fi
 
 
 # NOT WORKING (not possible?) XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 if [ -e "$isofpath/mageia.iso" ]; then
-menuentry 'Mageia Live ISO (amd64 UEFI)' --unrestricted --class mageia{
-	set isoname=mageia.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-#Mageia-5-KDE4-LiveDVD
-#Mageia-5-GNOME-LiveDVD
-    linux (loop)/boot/vmlinuz root=mgalive:LABEL=Mageia-5-GNOME-LiveDVD isofrom=$root2:$isofile 3 noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0
-    initrd (loop)/boot/cdrom/initrd.gz
-#   linux /boot/vmlinuz root=mgalive:LABEL=Mageia-5-KDE4-LiveDVD splash quiet noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0
-#   linux /boot/vmlinuz root=mgalive:LABEL=Mageia-5-KDE4-LiveDVD splash quiet noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0 install
-#	linux (loop)/boot/vmlinuz root=mgalive:LABEL=Mageia-4-KDE4-LiveDVD ro rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0 lang=de isofrom=/dev/sda1:\$isofile 3
-#  	linux (loop)/boot/vmlinuz root=mgalive:LABEL=Mageia-4-KDE4-LiveDVD ro isofrom=$ruuid:$isofile lang=de rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0 vga=791
-#   linux (loop)/isolinux/x86_64/vmlinuz automatic=method:cdrom splash quiet noiswmd
-#   initrd (loop)/isolinux/x86_64/all.rdz
-#   linux (loop)/boot/vmlinuz automatic=method:cdrom splash noiswmd root=mgalive:LABEL=Mageia-5-KDE4-LiveDVD isofrom=$root2uuid:$isofile
-#from ISO...
-#	linux /boot/vmlinuz root=mgalive:LABEL=Mageia-5-GNOME-LiveDVD splash quiet noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0
-# 	install
-	boot
-}
+	menuentry 'Mageia Live ISO (amd64 UEFI)' --unrestricted --class mageia{
+		set isoname=mageia.iso ; CHECK_MNU_FOLDER
+		set root=$root2
+		loopback loop $isofile
+	#Mageia-5-KDE4-LiveDVD
+	#Mageia-5-GNOME-LiveDVD
+		linux (loop)/boot/vmlinuz root=mgalive:LABEL=Mageia-5-GNOME-LiveDVD isofrom=$root2:$isofile 3 noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0
+		initrd (loop)/boot/cdrom/initrd.gz
+	#   linux /boot/vmlinuz root=mgalive:LABEL=Mageia-5-KDE4-LiveDVD splash quiet noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0
+	#   linux /boot/vmlinuz root=mgalive:LABEL=Mageia-5-KDE4-LiveDVD splash quiet noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0 install
+	#	linux (loop)/boot/vmlinuz root=mgalive:LABEL=Mageia-4-KDE4-LiveDVD ro rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0 lang=de isofrom=/dev/sda1:\$isofile 3
+	#  	linux (loop)/boot/vmlinuz root=mgalive:LABEL=Mageia-4-KDE4-LiveDVD ro isofrom=$ruuid:$isofile lang=de rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0 vga=791
+	#   linux (loop)/isolinux/x86_64/vmlinuz automatic=method:cdrom splash quiet noiswmd
+	#   initrd (loop)/isolinux/x86_64/all.rdz
+	#   linux (loop)/boot/vmlinuz automatic=method:cdrom splash noiswmd root=mgalive:LABEL=Mageia-5-KDE4-LiveDVD isofrom=$root2uuid:$isofile
+	#from ISO...
+	#	linux /boot/vmlinuz root=mgalive:LABEL=Mageia-5-GNOME-LiveDVD splash quiet noiswmd rd.luks=0 rd.lvm=0 rd.md=0 rd.dm=0
+	# 	install
+		boot
+	}
 fi
 
 
 #WORKS manjaro-xfce-15.12-x86_64
 if $BIT64; then
-if [ -e "$isofpath/manjaro.iso" ]; then
-menuentry 'Manjaro Live (x86-64 UEFI)' --unrestricted --class manjaro{
-    set isoname=manjaro.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-# probe params: -p = partmap, -f = filesystem, -u = uuid, -l = label
-	probe -l (loop) --set=isolabel
-	linux  (loop)/manjaro/boot/x86_64/manjaro  img_dev=/dev/disk/by-uuid/$root2uuid img_loop=$isofile  misobasedir=manjaro  misolabel=$isolabel nouveau.modeset=1 i915.modeset=1 radeon.modeset=1 logo.nologo overlay=free showopts
-	initrd (loop)/manjaro/boot/x86_64/manjaro.img
-	boot
-}
-fi
+	if [ -e "$isofpath/manjaro.iso" ]; then
+		menuentry 'Manjaro Live (x86-64 UEFI)' --unrestricted --class manjaro{
+			set isoname=manjaro.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+		# probe params: -p = partmap, -f = filesystem, -u = uuid, -l = label
+			probe -l (loop) --set=isolabel
+			linux  (loop)/manjaro/boot/x86_64/manjaro  img_dev=/dev/disk/by-uuid/$root2uuid img_loop=$isofile  misobasedir=manjaro  misolabel=$isolabel nouveau.modeset=1 i915.modeset=1 radeon.modeset=1 logo.nologo overlay=free showopts
+			initrd (loop)/manjaro/boot/x86_64/manjaro.img
+			boot
+		}
+	fi
 fi
 
 
 #WORKS openSUSE-Leap-42.1-DVD-x86_64.iso U64 L64
 if $BIT64; then
-if [ -e "$isofpath/opensuse.iso" ]; then
-menuentry "OpenSuse Live ISO (amd64 UEFI)" --unrestricted --class suse {
-    set isoname=opensuse.iso ; CHECK_MNU_FOLDER
-	echo "Please wait... " 
-	set gfxpayload=keep
-	set root=$root2
-	loopback loop $isofile
-#	linux (loop)/boot/x86_64/loader/linux isofrom_device=$imgdevpath isofrom_system=$isofile LANG=en_US.UTF-8
-	linux (loop)/boot/x86_64/loader/linux isofrom_system=$isofile LANG=en_US.UTF-8
-	initrd (loop)/boot/x86_64/loader/initrd
-	boot
-}
-fi
+	if [ -e "$isofpath/opensuse.iso" ]; then
+		menuentry "OpenSuse Live ISO (amd64 UEFI)" --unrestricted --class suse {
+			set isoname=opensuse.iso ; CHECK_MNU_FOLDER
+			echo "Please wait... " 
+			set gfxpayload=keep
+			set root=$root2
+			loopback loop $isofile
+		#	linux (loop)/boot/x86_64/loader/linux isofrom_device=$imgdevpath isofrom_system=$isofile LANG=en_US.UTF-8
+			linux (loop)/boot/x86_64/loader/linux isofrom_system=$isofile LANG=en_US.UTF-8
+			initrd (loop)/boot/x86_64/loader/initrd
+			boot
+		}
+	fi
 fi
 
 
 #WORKS Sabayon_Linux_16.05_amd64_SpinBase
 if $BIT64; then
-if [ -e "$isofpath/sabayon.iso" ]; then
-menuentry 'Sabayon (amd64 UEFI)' --unrestricted --class Sabayon{
-    set isoname=sabayon.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-#	linux (loop)/boot/sabayon root=/dev/ram0 aufs cdroot locale=en_US loop=/livecd.squashfs looptype=squashfs isoboot=$isofile
-	linux (loop)/boot/sabayon overlayfs cdroot isoboot=$isofile vga=791 
-	initrd (loop)/boot/sabayon.igz
-	boot
-}
-fi
+	if [ -e "$isofpath/sabayon.iso" ]; then
+		menuentry 'Sabayon (amd64 UEFI)' --unrestricted --class Sabayon{
+			set isoname=sabayon.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+		#	linux (loop)/boot/sabayon root=/dev/ram0 aufs cdroot locale=en_US loop=/livecd.squashfs looptype=squashfs isoboot=$isofile
+			linux (loop)/boot/sabayon overlayfs cdroot isoboot=$isofile vga=791 
+			initrd (loop)/boot/sabayon.igz
+			boot
+		}
+	fi
 fi
 
 #WORKS slackware64-14.1-install-dvd
 if $BIT64; then
-if [ -e "$isofpath/slackware.iso" ]; then
-menuentry "Slackware Live ISO (x86-64 UEFI)" --unrestricted --class slackware {
-    set isoname=slackware.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux (loop)/kernels/huge.s/bzImage vga=normal load_ramdisk=1 prompt_ramdisk=0 ro printk.time=0 nomodeset SLACK_KERNEL=huge.s
-	initrd (loop)/isolinux/initrd.img
-	boot
-}
-fi
+	if [ -e "$isofpath/slackware.iso" ]; then
+		menuentry "Slackware Live ISO (x86-64 UEFI)" --unrestricted --class slackware {
+			set isoname=slackware.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux (loop)/kernels/huge.s/bzImage vga=normal load_ramdisk=1 prompt_ramdisk=0 ro printk.time=0 nomodeset SLACK_KERNEL=huge.s
+			initrd (loop)/isolinux/initrd.img
+			boot
+		}
+	fi
 fi
 
 
 #WORKS but EFI64 wont run startx??
 if [ -e "$isofpath/systemrescuecd.iso" ]; then
-menuentry 'Systemrescuecd live ISO' --unrestricted --class recovery{
-    set isoname=systemrescuecd.iso ; CHECK_MNU_FOLDER
-	set gfxpayload=1024x768,8000x600
-	set root=$root2
-	loopback loop $isofile
-if $BIT64; then	linux (loop)/isolinux/rescue64 isoloop=$isofile scandelay=1 -- ; fi
-if $BIT32; then	linux (loop)/isolinux/rescue32 isoloop=$isofile scandelay=1 -- ; fi
-	initrd (loop)/isolinux/initram.igz
-	boot
-}
+	menuentry 'Systemrescuecd live ISO' --unrestricted --class recovery{
+		set isoname=systemrescuecd.iso ; CHECK_MNU_FOLDER
+		set gfxpayload=1024x768,8000x600
+		set root=$root2
+		loopback loop $isofile
+		if $BIT64; then	linux (loop)/isolinux/rescue64 isoloop=$isofile scandelay=1 -- ; fi
+		if $BIT32; then	linux (loop)/isolinux/rescue32 isoloop=$isofile scandelay=1 -- ; fi
+		initrd (loop)/isolinux/initram.igz
+		boot
+	}
 fi
 
 
 #WORKS ubuntu-15.10-desktop-amd64.iso
 if $BIT64; then
-if [ -e "$isofpath/ubuntu.iso" ]; then
-menuentry "Ubuntu Live (amd64 UEFI)" --unrestricted --class ubuntu {
-    set isoname=ubuntu.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$isofile quiet splash
-	initrd (loop)/casper/initrd.lz
-	boot
-}
-fi
+	if [ -e "$isofpath/ubuntu.iso" ]; then
+		menuentry "Ubuntu Live (amd64 UEFI)" --unrestricted --class ubuntu {
+			set isoname=ubuntu.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$isofile quiet splash
+			initrd (loop)/casper/initrd.lz
+			boot
+		}
+	fi
 fi
 #WORKS
 if $BIT64; then
-if [ -e "$isofpath/ubuntu.iso" ]; then
-menuentry "Ubuntu Install (amd64 UEFI)" --unrestricted --class ubuntu {
-	set isoname=ubuntu.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$isofile only-ubiquity quiet splash
-	initrd (loop)/casper/initrd.lz
-	boot
-}
-fi
+	if [ -e "$isofpath/ubuntu.iso" ]; then
+		menuentry "Ubuntu Install (amd64 UEFI)" --unrestricted --class ubuntu {
+			set isoname=ubuntu.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux (loop)/casper/vmlinuz.efi boot=casper iso-scan/filename=$isofile only-ubiquity quiet splash
+			initrd (loop)/casper/initrd.lz
+			boot
+		}
+	fi
 fi
 
 
 #WORKS zorin-os-9.1-core-64.iso 64-bit - works UEFI and MBR
 if $BIT64; then
-if [ -e "$isofpath/zorin.iso" ]; then
-menuentry "Zorin OS Live ISO (64-bit)" --unrestricted --class zorin {
-    set isoname=zorin.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux	(loop)/casper/vmlinuz.efi  file=/cdrom/preseed/ubuntu.seed boot=casper iso-scan/filename=$isofile quiet splash ---
-	initrd	(loop)/casper/initrd.lz
-	boot
-}
-fi
+	if [ -e "$isofpath/zorin.iso" ]; then
+		menuentry "Zorin OS Live ISO (64-bit)" --unrestricted --class zorin {
+			set isoname=zorin.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux	(loop)/casper/vmlinuz.efi  file=/cdrom/preseed/ubuntu.seed boot=casper iso-scan/filename=$isofile quiet splash ---
+			initrd	(loop)/casper/initrd.lz
+			boot
+		}
+	fi
 fi
 
 #WORKS zorin-os-11-core-32.iso - WORKS MBR only
 if $MBR; then
-if [ -e "$isofpath/zorin32.iso" ]; then
-menuentry "Zorin OS Live ISO (32-bit)" --unrestricted --class zorin {
-    set isoname=zorin32.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/ubuntu.seed boot=casper iso-scan/filename=$isofile quiet splash   ---
-	initrd	(loop)/casper/initrd.lz
-	boot
-}
-fi
+	if [ -e "$isofpath/zorin32.iso" ]; then
+		menuentry "Zorin OS Live ISO (32-bit)" --unrestricted --class zorin {
+			set isoname=zorin32.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/ubuntu.seed boot=casper iso-scan/filename=$isofile quiet splash   ---
+			initrd	(loop)/casper/initrd.lz
+			boot
+		}
+	fi
 fi
 
 

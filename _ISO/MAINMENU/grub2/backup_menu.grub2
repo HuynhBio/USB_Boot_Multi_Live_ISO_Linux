@@ -20,45 +20,45 @@
 
 #untested
 if $BIT64; then
-if [ -e "$isofpath/rdriveimage.iso" ]; then
-menuentry "Start R-DriveImage UEFI 64-bit" --unrestricted --class R-Drive-Image{
-    set isoname=rdriveimage.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux (loop,msdos1)/kernel64 vga=791
-	initrd (loop,msdos1)/lrfsbase.bin (loop,msdos1)/rm_scsi.b64 (loop,msdos1)/rm_pata.b64 (loop,msdos1)/rm_usb.b64 (loop,msdos1)/rm_pcard.b64 (loop,msdos1)/rm_video.b64 (loop,msdos1)/rm_other.b64 (loop,msdos1)/rootgui (loop,msdos1)/rmconfig.bin
-	linux (loop)/kernel64 vga=791
-	initrd (loop)/lrfsbase.bin (loop)/rm_scsi.b64 (loop)/rm_pata.b64 (loop)/rm_usb.b64 (loop)/rm_pcard.b64 (loop)/rm_video.b64 (loop)/rm_other.b64 (loop)/rootgui (loop)/rmconfig.bin
-	boot
-}
-fi
+	if [ -e "$isofpath/rdriveimage.iso" ]; then
+		menuentry "Start R-DriveImage UEFI 64-bit" --unrestricted --class R-Drive-Image{
+			set isoname=rdriveimage.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux (loop,msdos1)/kernel64 vga=791
+			initrd (loop,msdos1)/lrfsbase.bin (loop,msdos1)/rm_scsi.b64 (loop,msdos1)/rm_pata.b64 (loop,msdos1)/rm_usb.b64 (loop,msdos1)/rm_pcard.b64 (loop,msdos1)/rm_video.b64 (loop,msdos1)/rm_other.b64 (loop,msdos1)/rootgui (loop,msdos1)/rmconfig.bin
+			linux (loop)/kernel64 vga=791
+			initrd (loop)/lrfsbase.bin (loop)/rm_scsi.b64 (loop)/rm_pata.b64 (loop)/rm_usb.b64 (loop)/rm_pcard.b64 (loop)/rm_video.b64 (loop)/rm_other.b64 (loop)/rootgui (loop)/rmconfig.bin
+			boot
+		}
+	fi
 fi
 # only works in MBR32, not UEFI32 if 32-bit version
 if $BIT32; then
-if [ -e "$isofpath/rdriveimage.iso" ]; then
-menuentry "Start R-DriveImage Legacy-mode" --unrestricted --class R-Drive-Image{
-    set isoname=rdriveimagee.iso ; CHECK_MNU_FOLDER
-	set root=$root2
-	loopback loop $isofile
-	linux (loop,msdos1)/kernel32 vga=791
-	initrd (loop,msdos1)/lrfsbase.bin (loop,msdos1)/rm_scsi.b32 (loop,msdos1)/rm_pata.b32 (loop,msdos1)/rm_usb.b32 (loop,msdos1)/rm_pcard.b32 (loop,msdos1)/rm_video.b32 (loop,msdos1)/rm_other.b32 (loop,msdos1)/rootgui (loop,msdos1)/rmconfig.bin
-	linux (loop)/kernel32 vga=791
-	initrd (loop)/lrfsbase.bin (loop)/rm_scsi.b32 (loop)/rm_pata.b32 (loop)/rm_usb.b32 (loop)/rm_pcard.b32 (loop)/rm_video.b32 (loop)/rm_other.b32 (loop)/rootgui (loop)/rmconfig.bin
-	boot
-}
-fi
+	if [ -e "$isofpath/rdriveimage.iso" ]; then
+		menuentry "Start R-DriveImage Legacy-mode" --unrestricted --class R-Drive-Image{
+			set isoname=rdriveimagee.iso ; CHECK_MNU_FOLDER
+			set root=$root2
+			loopback loop $isofile
+			linux (loop,msdos1)/kernel32 vga=791
+			initrd (loop,msdos1)/lrfsbase.bin (loop,msdos1)/rm_scsi.b32 (loop,msdos1)/rm_pata.b32 (loop,msdos1)/rm_usb.b32 (loop,msdos1)/rm_pcard.b32 (loop,msdos1)/rm_video.b32 (loop,msdos1)/rm_other.b32 (loop,msdos1)/rootgui (loop,msdos1)/rmconfig.bin
+			linux (loop)/kernel32 vga=791
+			initrd (loop)/lrfsbase.bin (loop)/rm_scsi.b32 (loop)/rm_pata.b32 (loop)/rm_usb.b32 (loop)/rm_pcard.b32 (loop)/rm_video.b32 (loop)/rm_other.b32 (loop)/rootgui (loop)/rmconfig.bin
+			boot
+		}
+	fi
 fi
 if $MBR; then
-if [ -e "$isofpath/rdriveimagee.iso" ]; then
-menuentry "Start R-DriveImage LEGACY VERSION" --unrestricted --class R-Drive-Image{
-    set isoname=rdriveimage.iso ; CHECK_MNU_FOLDER
-	echo 'Loading Memdisk...'
-    linux16 /boot/grub/memdisk iso raw
-	echo 'Loading ISO...'
-    initrd16 $isofile
-	boot
-}
-fi
+	if [ -e "$isofpath/rdriveimagee.iso" ]; then
+		menuentry "Start R-DriveImage LEGACY VERSION" --unrestricted --class R-Drive-Image{
+			set isoname=rdriveimage.iso ; CHECK_MNU_FOLDER
+			echo 'Loading Memdisk...'
+			linux16 /boot/grub/memdisk iso raw
+			echo 'Loading ISO...'
+			initrd16 $isofile
+			boot
+		}
+	fi
 fi
 
 
