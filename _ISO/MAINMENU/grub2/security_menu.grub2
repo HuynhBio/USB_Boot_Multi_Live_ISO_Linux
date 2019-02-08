@@ -65,7 +65,7 @@ fi
 
 if $BIT64; then
 if [ "${grub_platform}" == "pc" ]; then
-if [ -e "/live/vmlinuz" ]; then
+if [ -e "$isofpath/kodachi.iso" ]; then
 menuentry "Kodachi 3 Live ISO" {
 	configfile "/_ISO/MAINMENU/cfg/kodachi.cfg"
 }

@@ -26,7 +26,7 @@ menuentry 'Boot Parted Magic 64' --unrestricted --class pmagic{
 	echo 'Loading Parted Magic 64 live ISO...'
 	#set gfxpayload=keep
 	set root=$root2
-    loopback loop $isofile
+  	loopback loop $isofile
 	linux (loop)/pmagic/bzImage64 iso_filename=$isofile edd=on vga=normal eject=no load_ramdisk=1
 	initrd (loop)/pmagic/initrd.img (loop)/pmagic/fu.img (loop)/pmagic/m64.img
 	boot
@@ -39,11 +39,11 @@ fi
 if $BIT32; then
 if [ -e "$isofpath/pmagic.iso" ]; then
 menuentry 'Boot Parted Magic 32' --unrestricted --class pmagic{
-    set isoname=pmagic.iso ; CHECK_MNU_FOLDER
+    	set isoname=pmagic.iso ; CHECK_MNU_FOLDER
 	echo 'Loading Parted Magic 32 live ISO...'
 	#set gfxpayload=keep
 	set root=$root2
-    loopback loop $isofile
+    	loopback loop $isofile
 #	linux (loop)/pmagic/bzImage iso_filename=$isofile edd=on vga=normal boot=live eject=no
 	linux (loop)/pmagic/bzImage iso_filename=$isofile eject=no load_ramdisk=1
 	initrd (loop)/pmagic/initrd.img (loop)/pmagic/fu.img (loop)/pmagic/m32.img
@@ -57,7 +57,7 @@ fi
 if $BIT64; then
 if [ -e "$isofpath/prgdm.iso" ]; then
 menuentry "Start Paragon-RCD in normal mode (EFI 64-bit)" --unrestricted --class paragon{
-    set isoname=prgdm.iso ; CHECK_MNU_FOLDER
+    	set isoname=prgdm.iso ; CHECK_MNU_FOLDER
 	set gfxpayload=keep
 	set root=$root2
 	loopback loop $isofile
@@ -80,7 +80,7 @@ fi
 if $BIT64; then
 if [ -e "$isofpath/pwh.iso" ]; then
 menuentry "MiniTool Partition Wizard Boot Disk 9 (64-bit)" --unrestricted --class minitool{
-    set isoname=pwh.iso ; CHECK_MNU_FOLDER
+    	set isoname=pwh.iso ; CHECK_MNU_FOLDER
 	set gfxpayload=keep
 	set root=$root2
 	loopback loop $isofile
@@ -93,7 +93,7 @@ fi
 #if $BIT32; then
 if [ -e "$isofpath/pwh32.iso" ]; then
 menuentry "MiniTool Partition Wizard Boot Disk 9 (32-bit)" --unrestricted --class minitool{
-    set isoname=pwh32.iso ; CHECK_MNU_FOLDER
+    	set isoname=pwh32.iso ; CHECK_MNU_FOLDER
 	set gfxpayload=keep
 	set root=$root2
 	loopback loop $isofile
@@ -109,7 +109,7 @@ fi
 if $EFI64; then
 if [ -e "$isofpath/konbootx64.efi" ]; then
 menuentry "Konboot EFI 64" --unrestricted --class lock {
-    set isoname=konbootx64.efi ; CHECK_MNU_FOLDER
+    	set isoname=konbootx64.efi ; CHECK_MNU_FOLDER
 	chainloader $ifp/konbootx64.efi
 	boot
 }
@@ -119,7 +119,7 @@ fi
 if $EFI32; then
 if [ -e "$isofpath/konbootia32.efi" ]; then
 menuentry "Konboot EFI 32" --unrestricted --class lock {
-    set isoname=konbootia32.efi ; CHECK_MNU_FOLDER
+    	set isoname=konbootia32.efi ; CHECK_MNU_FOLDER
 	chainloader $ifp/konbootia32.efi
 	boot
 }

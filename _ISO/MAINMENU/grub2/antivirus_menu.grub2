@@ -23,17 +23,16 @@
 if $MBR; then
 if [ -e "$isofpath/avg.iso" ]; then
 menuentry "AVG Rescue CD" --unrestricted --class avg{
-    set isoname=avg.iso ; CHECK_MNU_FOLDER
+    	set isoname=avg.iso ; CHECK_MNU_FOLDER
 	if $MBR; then	set gfxpayload=text ; fi
 	if $EFI; then	set gfxpayload=keep ; fi
 	set root=$root2
-    loopback loop $isofile
-	# use safe mode boot
+    	loopback loop $isofile
+# use safe mode boot
    	linux	(loop)/isolinux/vmlinuz root=/dev/ram0 real_root=/dev/loop0 max_loop=255 init=linuxrc initrd=initrd.lzm video=vesafb:off reboot=bios
-   	initrd	(loop)/isolinux/initrd.lzm
-
 # normal mode
 # 	linux	(loop)/isolinux/vmlinuz root=/dev/ram0 real_root=/dev/loop0 max_loop=255 initrd=initrd.lzm init=linuxrc vga=791  reboot=bios video=vesafb
+   	initrd	(loop)/isolinux/initrd.lzm
 	boot
 }
 fi
@@ -52,18 +51,16 @@ menuentry "Avira Rescue live CD" --unrestricted --class avira{
 	echo
 	echo Press ENTER to continue...
 	read
-    set isoname=avira.iso ; CHECK_MNU_FOLDER
+  	 set isoname=avira.iso ; CHECK_MNU_FOLDER
 	set gfxpayload=800x600
 	set root=$root2
 	loopback loop $isofile
 	linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/ubuntu.seed boot=casper  iso-scan/filename=$isofile live-media-path=casper -- debian-installer/language=en console-setup/layoutcode=en persistent persistent-path=$isoextpath/$fldname
 	initrd	(loop)/casper/initrd.lz
 	boot
-
 #	linux	(loop)/casper/vmlinuz  file=/cdrom/preseed/ubuntu.seed boot=casper iso-scan/filename=$isofile quiet splash --
 #	set quiet=1 ignore_uuid 
 #cheat codes: persistent non-persistent persistent-path= live-media-path= toram todisk=	 uuid= ignore_uuid ip=
-	
 }
 fi
 
@@ -71,13 +68,13 @@ if $FAT; then
 # bitdefender-rescue-cd.iso  works for all!
 if [ -e "$isofpath/bitdefender.iso" ]; then
 	menuentry "Bitdefender Rescue CD" --unrestricted --class icon-bit {
-    set isoname=bitdefender.iso ; CHECK_MNU_FOLDER 
-		insmod video_bochs
-		insmod video_cirrus
-		set root=$root2
+    	set isoname=bitdefender.iso ; CHECK_MNU_FOLDER 
+	insmod video_bochs
+	insmod video_cirrus
+	set root=$root2
         loopback loop $isofile
-		linux	(loop)/boot/kernel.i386-pc root=/dev/ram0 real_root=/dev/loop0 loop=/rescue/livecd.squashfs cdroot_marker=/rescue/livecd.squashfs initrd udev cdroot scandelay=10 quiet splash lang=en isoboot=$isofile
-		initrd	(loop)/boot/initfs.i386-pc 
+	linux	(loop)/boot/kernel.i386-pc root=/dev/ram0 real_root=/dev/loop0 loop=/rescue/livecd.squashfs cdroot_marker=/rescue/livecd.squashfs initrd udev cdroot scandelay=10 quiet splash lang=en isoboot=$isofile
+	initrd	(loop)/boot/initfs.i386-pc 
 	boot
 }
 fi
@@ -87,9 +84,9 @@ fi
 #drweb-livedisk-900-cd.iso - cannot get to work - no iso cheat code in \scripts\casper script! only live-media-path= persistent persistent-path=  UUID= ignore_uuid
 if [ -e "$isofpath/drweb.iso" ]; then
 menuentry "DrWeb live CD - DOES NOT WORK - please use Extracted Files!" --unrestricted --class drweb{
-    set isoname=drweb.iso ; CHECK_MNU_FOLDER
+    	set isoname=drweb.iso ; CHECK_MNU_FOLDER
    	set root=$root2
-    loopback loop $isofile
+    	loopback loop $isofile
 	linux	(loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile usbroot findiso=$isofile isofrom=$isofile ignore_uuid --
 ##boot=casper  quiet splash --
 	initrd	(loop)/casper/initrd.lz
